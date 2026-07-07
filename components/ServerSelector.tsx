@@ -26,20 +26,25 @@ export default function ServerSelector() {
   }, []);
 
   return (
-    <select
-      className="rounded border px-2 py-1"
-      value={serverId}
-      onChange={(e) => {
-        const selected = servers.find((s) => s.server_id === e.target.value);
-        if (selected) setServer(selected.server_id, selected.server_name);
-      }}
-    >
-      <option value="">Selecciona servidor</option>
-      {servers.map((s) => (
-        <option key={s.server_id} value={s.server_id}>
-          {s.server_name}
-        </option>
-      ))}
-    </select>
+    <label className="flex items-center gap-3 text-xs text-zinc-500">
+      <span className="hidden sm:inline">Server</span>
+      <select
+        className="focus-ring rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm"
+        value={serverId}
+        onChange={(e) => {
+          const selected = servers.find(
+            (s) => s.server_id === e.target.value
+          );
+          if (selected) setServer(selected.server_id, selected.server_name);
+        }}
+      >
+        <option value="">Select server</option>
+        {servers.map((s) => (
+          <option key={s.server_id} value={s.server_id}>
+            {s.server_name}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }

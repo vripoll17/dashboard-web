@@ -70,26 +70,35 @@ export default function QuizAnalyticsPage() {
   }, [data, userFilter, topicFilter, dateFrom, dateTo]);
 
   return (
-    <main className="p-8">
-      <h1 className="text-xl font-semibold">Quiz Analytics</h1>
+    <main className="p-6 lg:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">
+            Quiz Analytics
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Drill into attempts with filters and timestamps.
+          </p>
+        </div>
+      </div>
 
       {!serverId && (
-        <p className="mt-4 text-sm text-zinc-500">
-          Selecciona un servidor en el Topbar.
-        </p>
+        <div className="surface surface-muted mt-6 border-dashed px-4 py-6 text-sm text-zinc-600">
+          Select a server in the Topbar.
+        </div>
       )}
 
       {serverId && (
         <>
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="surface mt-6 grid grid-cols-1 gap-4 p-5 md:grid-cols-4">
             <div>
-              <label className="block text-xs text-zinc-500">Usuario</label>
+              <label className="block text-xs text-zinc-500">User</label>
               <select
-                className="mt-1 w-full rounded border px-2 py-1 text-sm"
+                className="focus-ring mt-1 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm"
                 value={userFilter}
                 onChange={(e) => setUserFilter(e.target.value)}
               >
-                <option value="">Todos</option>
+                <option value="">All</option>
                 {users.map((u) => (
                   <option key={u} value={u}>
                     {u}
@@ -101,11 +110,11 @@ export default function QuizAnalyticsPage() {
             <div>
               <label className="block text-xs text-zinc-500">Topic</label>
               <select
-                className="mt-1 w-full rounded border px-2 py-1 text-sm"
+                className="focus-ring mt-1 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm"
                 value={topicFilter}
                 onChange={(e) => setTopicFilter(e.target.value)}
               >
-                <option value="">Todos</option>
+                <option value="">All</option>
                 {topics.map((t) => (
                   <option key={t} value={t}>
                     {t}
@@ -115,20 +124,20 @@ export default function QuizAnalyticsPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-zinc-500">Desde</label>
+              <label className="block text-xs text-zinc-500">From</label>
               <input
                 type="date"
-                className="mt-1 w-full rounded border px-2 py-1 text-sm"
+                className="focus-ring mt-1 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-xs text-zinc-500">Hasta</label>
+              <label className="block text-xs text-zinc-500">To</label>
               <input
                 type="date"
-                className="mt-1 w-full rounded border px-2 py-1 text-sm"
+                className="focus-ring mt-1 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
               />
@@ -136,31 +145,34 @@ export default function QuizAnalyticsPage() {
           </div>
 
           {loading ? (
-            <p className="mt-4 text-sm">Cargando...</p>
+            <p className="mt-4 text-sm text-zinc-500">Loading...</p>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded border">
+            <div className="surface mt-6 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-zinc-50 text-left">
+                <thead className="border-b border-zinc-200/60 bg-zinc-50 text-left text-xs uppercase tracking-wider text-zinc-500">
                   <tr>
-                    <th className="px-4 py-2">Name</th>
-                    <th className="px-4 py-2">Topic</th>
-                    <th className="px-4 py-2">Correct</th>
-                    <th className="px-4 py-2">Total</th>
-                    <th className="px-4 py-2">Accuracy</th>
-                    <th className="px-4 py-2">Timestamp</th>
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-4 py-3">Topic</th>
+                    <th className="px-4 py-3">Correct</th>
+                    <th className="px-4 py-3">Total</th>
+                    <th className="px-4 py-3">Accuracy</th>
+                    <th className="px-4 py-3">Timestamp</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((d, i) => (
-                    <tr key={`${d.name}-${d.topic}-${i}`} className="border-t">
-                      <td className="px-4 py-2">{d.name}</td>
-                      <td className="px-4 py-2">{d.topic}</td>
-                      <td className="px-4 py-2">{d.correct}</td>
-                      <td className="px-4 py-2">{d.total}</td>
-                      <td className="px-4 py-2">
+                    <tr
+                      key={`${d.name}-${d.topic}-${i}`}
+                      className="border-t border-zinc-100"
+                    >
+                      <td className="px-4 py-3">{d.name}</td>
+                      <td className="px-4 py-3">{d.topic}</td>
+                      <td className="px-4 py-3">{d.correct}</td>
+                      <td className="px-4 py-3">{d.total}</td>
+                      <td className="px-4 py-3">
                         {d.total > 0 ? ((d.correct / d.total) * 100).toFixed(1) : "0.0"}%
                       </td>
-                      <td className="px-4 py-2">{formatDate(d.timestamp)}</td>
+                      <td className="px-4 py-3">{formatDate(d.timestamp)}</td>
                     </tr>
                   ))}
                 </tbody>

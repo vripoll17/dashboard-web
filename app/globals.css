@@ -3,6 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --surface: #ffffff;
+  --surface-muted: #f6f7fb;
+  --accent: #0f172a;
+  --accent-soft: #e2e8f0;
+  --ring: rgba(15, 23, 42, 0.18);
+  --app-bg: radial-gradient(1200px 600px at 10% -10%, rgba(59, 130, 246, 0.12), transparent 60%),
+    radial-gradient(1000px 500px at 90% -20%, rgba(14, 165, 233, 0.12), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(241, 245, 249, 0.9));
 }
 
 @theme inline {
@@ -16,11 +24,41 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --surface: #111827;
+    --surface-muted: #0f172a;
+    --accent: #f8fafc;
+    --accent-soft: #1f2937;
+    --ring: rgba(148, 163, 184, 0.35);
+    --app-bg: radial-gradient(1200px 600px at 10% -10%, rgba(59, 130, 246, 0.18), transparent 60%),
+      radial-gradient(1000px 500px at 90% -20%, rgba(14, 165, 233, 0.2), transparent 55%),
+      linear-gradient(180deg, rgba(2, 6, 23, 0.95), rgba(15, 23, 42, 0.95));
   }
 }
 
 body {
-  background: var(--background);
+  background: var(--app-bg);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Space Grotesk", "Segoe UI", sans-serif;
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--accent-soft);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.surface-muted {
+  background: var(--surface-muted);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px var(--ring);
 }

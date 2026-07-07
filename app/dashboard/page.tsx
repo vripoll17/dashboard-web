@@ -53,63 +53,72 @@ export default function Home() {
   const topicActivity = useMemo(() => computeTopicActivity(data), [data]);
 
   return (
-    <main className="p-8">
-      <h1 className="text-xl font-semibold">Dashboard</h1>
-      <p className="mt-2 text-sm text-zinc-600">
-        Servidor seleccionado: {serverName || "ninguno"}
-      </p>
+    <main className="p-6 lg:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Quick overview of engagement, accuracy, and topic activity.
+          </p>
+        </div>
+        <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+          {serverName ? `Server: ${serverName}` : "No server selected"}
+        </div>
+      </div>
 
       {!serverId && (
-        <p className="mt-4 text-sm text-zinc-500">
-          Selecciona un servidor en el Topbar para ver datos.
-        </p>
+        <div className="surface surface-muted mt-6 border-dashed px-4 py-6 text-sm text-zinc-600">
+          Select a server in the Topbar to view data.
+        </div>
       )}
 
       {serverId && (
         <>
           {loading ? (
-            <p className="mt-4 text-sm">Cargando...</p>
+            <p className="mt-4 text-sm text-zinc-500">Loading...</p>
           ) : (
             <>
               <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded border p-4">
-                  <div className="text-xs uppercase text-zinc-500">
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
                     Total quizzes
                   </div>
-                  <div className="mt-2 text-2xl font-semibold">
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
                     {kpis.totalQuizzes}
                   </div>
                 </div>
-                <div className="rounded border p-4">
-                  <div className="text-xs uppercase text-zinc-500">
-                    Usuarios unicos
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Unique users
                   </div>
-                  <div className="mt-2 text-2xl font-semibold">
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
                     {kpis.uniqueUsers}
                   </div>
                 </div>
-                <div className="rounded border p-4">
-                  <div className="text-xs uppercase text-zinc-500">
-                    Media aciertos
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Average accuracy
                   </div>
-                  <div className="mt-2 text-2xl font-semibold">
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
                     {(kpis.globalAccuracy * 100).toFixed(1)}%
                   </div>
                 </div>
-                <div className="rounded border p-4">
-                  <div className="text-xs uppercase text-zinc-500">
-                    Topics activos
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Active topics
                   </div>
-                  <div className="mt-2 text-2xl font-semibold">
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
                     {kpis.uniqueTopics}
                   </div>
                 </div>
               </div>
 
               <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Top usuarios</h2>
-                  <div className="mt-3 space-y-2 text-sm">
+                <div className="surface p-5">
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    Top students
+                  </h2>
+                  <div className="mt-3 space-y-2 text-sm text-zinc-700">
                     {topUsers.map((u) => (
                       <div key={u.user_id} className="flex justify-between">
                         <span>{u.name}</span>
@@ -119,9 +128,11 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Topics mas dificiles</h2>
-                  <div className="mt-3 space-y-2 text-sm">
+                <div className="surface p-5">
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    Hardest topics
+                  </h2>
+                  <div className="mt-3 space-y-2 text-sm text-zinc-700">
                     {hardestTopics.map((t) => (
                       <div key={t.topic} className="flex justify-between">
                         <span>{t.topic}</span>
@@ -133,9 +144,11 @@ export default function Home() {
               </div>
 
               <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Evolucion quizzes</h2>
-                  <div className="mt-4 h-56">
+                <div className="surface p-5">
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    Quiz volume over time
+                  </h2>
+                  <div className="mt-4 h-60">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={timeSeries}>
                         <XAxis dataKey="date" />
@@ -147,9 +160,11 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Ratio global de aciertos</h2>
-                  <div className="mt-4 h-56">
+                <div className="surface p-5">
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    Overall accuracy split
+                  </h2>
+                  <div className="mt-4 h-60">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -167,9 +182,11 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Actividad por topic</h2>
-                  <div className="mt-4 h-56">
+                <div className="surface p-5">
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    Activity by topic
+                  </h2>
+                  <div className="mt-4 h-60">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={topicActivity}>
                         <XAxis dataKey="topic" />

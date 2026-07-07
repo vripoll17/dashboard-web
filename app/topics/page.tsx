@@ -73,6 +73,36 @@ export default function TopicsPage() {
   const difficulty = useMemo(() => computeTopicDifficulty(stats), [stats]);
   const extremes = useMemo(() => computeQuestionExtremes(questions), [questions]);
 
+  const summary = useMemo(() => {
+    if (topicTable.length === 0) {
+      return {
+        topics: 0,
+        totalQuizzes: 0,
+        totalQuestions: 0,
+        accuracy: 0,
+      };
+    }
+    const totals = topicTable.reduce(
+      (acc, row) => {
+        acc.totalQuizzes += row.totalQuizzes;
+        acc.totalQuestions += row.totalQuestions;
+        acc.correctTotal += row.correctTotal;
+        return acc;
+      },
+      { totalQuizzes: 0, totalQuestions: 0, correctTotal: 0 }
+    );
+    const accuracy =
+      totals.totalQuestions === 0
+        ? 0
+        : totals.correctTotal / totals.totalQuestions;
+    return {
+      topics: topicTable.length,
+      totalQuizzes: totals.totalQuizzes,
+      totalQuestions: totals.totalQuestions,
+      accuracy,
+    };
+  }, [topicTable]);
+
   const topicTitleById = useMemo(() => {
     const map = new Map<string, string>();
     for (const t of topics) {
@@ -86,83 +116,154 @@ export default function TopicsPage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-xl font-semibold">Topics</h1>
+    <main className="p-6 lg:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">
+            Topics
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Track performance by topic and spot recurring misunderstandings.
+          </p>
+        </div>
+      </div>
 
       {!serverId && (
-        <p className="mt-4 text-sm text-zinc-500">
-          Selecciona un servidor en el Topbar.
-        </p>
+        <div className="surface surface-muted mt-6 border-dashed px-4 py-6 text-sm text-zinc-600">
+          Select a server in the Topbar to unlock insights.
+        </div>
       )}
-
       {serverId && (
         <>
           {loading ? (
-            <p className="mt-4 text-sm">Cargando...</p>
+            <p className="mt-4 text-sm text-zinc-500">Loading...</p>
           ) : (
             <>
-              <div className="mt-6 overflow-x-auto rounded border">
+              <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Active topics
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
+                    {summary.topics}
+                  </div>
+                </div>
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Total quizzes
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
+                    {summary.totalQuizzes}
+                  </div>
+                </div>
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Total questions
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
+                    {summary.totalQuestions}
+                  </div>
+                </div>
+                <div className="surface px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    Overall accuracy
+                  </div>
+                  <div className="mt-2 text-2xl font-semibold text-zinc-900">
+                    {(summary.accuracy * 100).toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+
+              <div className="surface mt-6 overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-zinc-50 text-left">
+                  <thead className="border-b border-zinc-200/60 bg-zinc-50 text-left text-xs uppercase tracking-wider text-zinc-500">
                     <tr>
-                      <th className="px-4 py-2">Topic</th>
-                      <th className="px-4 py-2">Total quizzes</th>
-                      <th className="px-4 py-2">Correct total</th>
-                      <th className="px-4 py-2">Total preguntas</th>
-                      <th className="px-4 py-2">Accuracy</th>
+                      <th className="px-4 py-3">Topic</th>
+                      <th className="px-4 py-3">Total quizzes</th>
+                      <th className="px-4 py-3">Correct total</th>
+                      <th className="px-4 py-3">Total questions</th>
+                      <th className="px-4 py-3">Accuracy</th>
                     </tr>
                   </thead>
                   <tbody>
                     {topicTable.map((t) => (
-                      <tr key={t.topic} className="border-t">
-                        <td className="px-4 py-2">{displayTopic(t.topic)}</td>
-                        <td className="px-4 py-2">{t.totalQuizzes}</td>
-                        <td className="px-4 py-2">{t.correctTotal}</td>
-                        <td className="px-4 py-2">{t.totalQuestions}</td>
-                        <td className="px-4 py-2">
+                      <tr key={t.topic} className="border-t border-zinc-100">
+                        <td className="px-4 py-3">{displayTopic(t.topic)}</td>
+                        <td className="px-4 py-3">{t.totalQuizzes}</td>
+                        <td className="px-4 py-3">{t.correctTotal}</td>
+                        <td className="px-4 py-3">{t.totalQuestions}</td>
+                        <td className="px-4 py-3">
                           {(t.accuracy * 100).toFixed(1)}%
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                {topicTable.length === 0 && (
+                  <div className="px-4 py-6 text-sm text-zinc-500">
+                    No data for this server yet.
+                  </div>
+                )}
               </div>
 
               <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Comparacion entre topics</h2>
-                  <div className="mt-4 h-56">
+                <div className="surface p-5">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-zinc-900">
+                      Topic comparison
+                    </h2>
+                    <span className="text-xs text-zinc-400">Quizzes</span>
+                  </div>
+                  <div className="mt-4 h-60">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={comparison}>
                         <XAxis dataKey="topic" />
                         <YAxis allowDecimals={false} />
                         <Tooltip />
-                        <Bar dataKey="quizzes" fill="#2563eb" />
+                        <Bar dataKey="quizzes" fill="#0f172a" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
 
-                <div className="rounded border p-4">
-                  <h2 className="font-semibold">Ranking de dificultad</h2>
-                  <div className="mt-4 h-56">
+                <div className="surface p-5">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-zinc-900">
+                      Difficulty ranking
+                    </h2>
+                    <span className="text-xs text-zinc-400">Accuracy</span>
+                  </div>
+                  <div className="mt-4 h-60">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={difficulty}>
                         <XAxis dataKey="topic" />
                         <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} />
-                        <Tooltip formatter={(v) => (typeof v === "number" ? `${(v * 100).toFixed(1)}%` : "")} />
-                        <Bar dataKey="accuracy" fill="#dc2626" />
+                        <Tooltip
+                          formatter={(v) =>
+                            typeof v === "number"
+                              ? `${(v * 100).toFixed(1)}%`
+                              : ""
+                          }
+                        />
+                        <Bar dataKey="accuracy" fill="#ef4444" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 rounded border p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <h2 className="font-semibold">Preguntas (opcional)</h2>
+              <div className="surface mt-8 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-sm font-semibold text-zinc-900">
+                      Critical questions
+                    </h2>
+                    <p className="text-xs text-zinc-500">
+                      Find the questions with the most misses or hits.
+                    </p>
+                  </div>
                   <select
-                    className="rounded border px-2 py-1 text-sm"
+                    className="focus-ring rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm"
                     value={selectedTopicId}
                     onChange={(e) => setSelectedTopicId(e.target.value)}
                   >
@@ -175,32 +276,48 @@ export default function TopicsPage() {
                 </div>
 
                 {loadingQuestions ? (
-                  <p className="mt-4 text-sm">Cargando preguntas...</p>
+                  <p className="mt-4 text-sm text-zinc-500">
+                    Loading questions...
+                  </p>
                 ) : (
                   <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div>
-                      <h3 className="text-sm font-semibold">Mas falladas</h3>
-                      <ul className="mt-2 space-y-2 text-sm">
+                      <h3 className="text-sm font-semibold text-zinc-900">
+                        Most missed
+                      </h3>
+                      <ul className="mt-3 space-y-2 text-sm">
                         {extremes.mostFailed.map((q) => (
-                          <li key={q.question_id} className="rounded border p-2">
+                          <li
+                            key={q.question_id}
+                            className="rounded-xl border border-zinc-200 bg-white p-3"
+                          >
                             <div className="text-xs text-zinc-500">
-                              Fallos: {q.failures || 0}
+                              Misses: {q.failures || 0}
                             </div>
-                            <div>{q.question}</div>
+                            <div className="mt-1 text-zinc-800">
+                              {q.question}
+                            </div>
                           </li>
                         ))}
                       </ul>
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-semibold">Mas acertadas</h3>
-                      <ul className="mt-2 space-y-2 text-sm">
+                      <h3 className="text-sm font-semibold text-zinc-900">
+                        Most correct
+                      </h3>
+                      <ul className="mt-3 space-y-2 text-sm">
                         {extremes.mostSuccess.map((q) => (
-                          <li key={q.question_id} className="rounded border p-2">
+                          <li
+                            key={q.question_id}
+                            className="rounded-xl border border-zinc-200 bg-white p-3"
+                          >
                             <div className="text-xs text-zinc-500">
-                              Aciertos: {q.success || 0}
+                              Hits: {q.success || 0}
                             </div>
-                            <div>{q.question}</div>
+                            <div className="mt-1 text-zinc-800">
+                              {q.question}
+                            </div>
                           </li>
                         ))}
                       </ul>
